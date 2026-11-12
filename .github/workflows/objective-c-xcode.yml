@@ -1,0 +1,30 @@
+имя:                     эсли [ "`ls -A | grep -i \\.xcworkspace\$`" ]; тогда filetype_parameter="рабочее пространство" && файл_для_сборки="`ls -A | grep -i \\.xcworkspace\$`"; имя filetype_parameter="проект" && файл_для_сборки="`ls -A | grep -i \\.xcodeproj\$`"; фи"$scheme"          эсли [ $схема = по электронной почте]; тогда шема=$(cat по информации); фи"$filetype_parameter" "$файл_для_сборки" | xcpretty && выход ${ТРУБЧАТЫЙ СТАТУС[0]}
+
+на:
+  толкать:
+    ветви: [ "основной" ]
+  pull_запрос:
+    ветви: [ "основной" ]
+
+работа:
+  строить:
+    имя: Создайте и проанализируйте схему по умолчанию с помощью команды xcodebuild
+    наезжает: macos-посредняяяяя
+
+    шаги:
+      - имя: Проверить
+        использует: действия/checkout@v4
+      - имя: Установить схему по умолчанию
+        бегать: |
+          scheme_list=$(xcodebuild -list -json | tr -d "\n")
+          default=$(echo $scheme_list | ruby -e "требуется 'json'; появляется JSON.parse(STDIN.gets)['project']['targets'][0]")
+          echo $default | cat >default
+          эхо Использование схемы по умолчанию: $по умолчанию
+      - имя: Строить
+        энв:
+          схема: ${{ 'по умолчанию' }}
+        бегать: |
+          эсли [ $схема = по информации]; тогда шема=$(cat по информации); фи
+          эсли [ "`ls -A | grep -i \\.xcworkspace\$`" ]; тогда filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; имя filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
+          file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
+          xcodebuild clean build analyze -scheme "$scheme" -"$filetype_parameter" "$file_to_build" | xcpretty && выход ${PIPESTATUS[0]}
